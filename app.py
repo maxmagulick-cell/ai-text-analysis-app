@@ -1,19 +1,19 @@
 import streamlit as st
-import os
-from dotenv import load_dotenv
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 
-# Load environment variables
-load_dotenv()
+# Get credentials from Streamlit secrets
+endpoint = st.secrets["FOUNDRY_ENDPOINT"]
+key = st.secrets["FOUNDRY_KEY"]
 
-# Get credentials
-endpoint = os.getenv("FOUNDRY_ENDPOINT")
-key = os.getenv("FOUNDRY_KEY")
+# Debug (you can remove later)
+st.write("Endpoint:", endpoint)
+st.write("Key exists:", key is not None)
+st.write("Key length:", len(key))
 
 # Create client
-client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-
+credential = AzureKeyCredential(key)
+client = TextAnalyticsClient(endpoint=endpoint, credential=credential)
 # ---------------- UI ---------------- #
 
 st.set_page_config(page_title="AI Text Analysis App", page_icon="🧠")
