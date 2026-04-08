@@ -6,11 +6,6 @@ from azure.core.credentials import AzureKeyCredential
 endpoint = st.secrets["FOUNDRY_ENDPOINT"]
 key = st.secrets["FOUNDRY_KEY"]
 
-# Debug
-st.write("Endpoint:", endpoint)
-st.write("Key exists:", key is not None)
-st.write("Key length:", len(key))
-
 # Create client
 credential = AzureKeyCredential(key)
 client = TextAnalyticsClient(endpoint=endpoint, credential=credential)
