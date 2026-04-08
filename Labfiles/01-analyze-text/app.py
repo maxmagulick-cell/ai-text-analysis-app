@@ -17,17 +17,43 @@ st.write("Analyze text using Azure AI")
 
 text = st.text_area("Enter text")
 
-if st.button("Analyze"):
+col1, col2 = st.columns(2)
+
+with col1:
+    analyze = st.button("Analyze")
+
+with col2:
+    clear = st.button("Clear")
+
+if clear:
+    st.rerun()
+
+if analyze:
     try:
-        language = client.detect_language(documents=[text])[0]
-        st.success(language.primary_language.name)
+        with st.spinner("Analyzing text..."):
 
-        entities = client.recognize_entities(documents=[text])[0].entities
-        for e in entities:
-            st.write(e.text, "-", e.category)
+            # Language
+            language = client.detect_language(documents=[text])[0]
+            st.subheader("🌍 Language")
+            st.success(language.primary_language.name)
 
-        pii = client.recognize_pii_entities(documents=[text])[0]
-        st.write("Redacted:", pii.redacted_text)
+            # Entities
+            entities = client.recognize_entities(documents=[text])[0].entities
+            st.subheader("🏷️ Entities")
+
+            for e in entities:
+                st.write(f"- {e.text} ({e.category})")
+
+            # PII
+            pii_result = client.recognize_pii_entities(documents=[text])[0]
+
+            st.subheader("🔒 PII Detection")
+            for e in pii_result.entities:
+                st.write(f"- {e.text} ({e.category})")
+
+            # Redacted text
+            st.subheader("🧹 Redacted Text")
+            st.text_area("Redacted Text", pii_result.redacted_text, height=120)
 
     except Exception as e:
         st.error(e)
